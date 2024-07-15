@@ -1,0 +1,17 @@
+{% load compress %}
+{% load static  %}
+
+<!DOCTYPE html>
+<html>
+    <body>
+        <link rel="stylesheet" href="{% static 'src/input.css' %}">  
+        <div>
+            <h1>Login here</h1>
+            <form method = "post" action="">
+                {% csrf_token %}
+                {{form }}
+                <input type="submit" value="Submit" >
+            </form>
+        </div>
+    </body>
+</html>

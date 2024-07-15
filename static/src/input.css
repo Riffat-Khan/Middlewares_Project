@@ -1,0 +1,15 @@
+/* body{
+    padding: 100px 300px;
+}
+
+div {
+ text-align: center;
+ padding: 10px;
+ border: 2px solid black;
+ border-radius: 20px;
+}
+
+div:first-child{
+    background-color: blueviolet;
+    font-weight: 500;
+} */
