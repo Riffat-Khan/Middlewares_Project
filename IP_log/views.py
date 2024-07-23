@@ -1,35 +1,27 @@
-from django.http import HttpResponse
-from django.views.generic import View, TemplateView
+from django.views.generic import TemplateView, DetailView, CreateView
 from django.contrib import messages
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
 from django.contrib.auth import login, authenticate
-from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
-from django.views.generic import CreateView
-from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from .models import CustomUser, Profile
-from .enum import RoleChoice
+from .forms import CustomUserCreationForm
+from django.contrib.auth.mixins import LoginRequiredMixin
+from .models import Profile
 
+class LoggingIP(LoginRequiredMixin, DetailView):
+    model = Profile
+    template_name = 'home.html'
+    context_object_name = 'profile'
 
-class CustomUserCreationForm(UserCreationForm):
-    email = forms.EmailField(required=True)
-    role = forms.ChoiceField(choices=[(role.value, role.name) for role in RoleChoice], required=True)
+    def get_object(self):
+        return self.request.user.profile
 
-    class Meta:
-        model = CustomUser
-        fields = ('email', 'password1', 'password2', 'role')
-
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        user.email = self.cleaned_data['email']
-        if commit:
-            user.save()
-
-        profile = Profile(user=user, role=self.cleaned_data['role'], count=0)
-        if commit:
-            profile.save()
-        return user
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        profile = self.get_object()
+        context['count'] = profile.count
+        context['last_access_time'] = profile.last_access_time
+        # context['ip_address'] = profile.ip_address
+        return context
 
 
 class SignUpView(CreateView):
@@ -40,20 +32,8 @@ class SignUpView(CreateView):
     def form_valid(self, form):
         response = super().form_valid(form)
         return response
-    
-class LoggingIP(View):
-    def get(self, request):
-        ip_address = getattr(request, 'ip_address', 'Unknown')
-        req_time = getattr(request, 'request_time', 'Unknown')
-        access_count = getattr(request, 'access_count', 'Unknown')
 
-        context = {
-            'ip_address': ip_address,
-            'req_time': req_time,
-            'access_count': access_count,
-        }
-        return render(request, 'home.html', context)
-    
+
 class LoginView(TemplateView):
     template_name = 'login.html'
 

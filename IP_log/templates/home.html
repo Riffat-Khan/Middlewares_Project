@@ -36,9 +36,8 @@
     <h1>Welcome to Your Page</h1>
     <p>Hi!!!!!</p>
     <p>Welcome to our website.</p>
-    <p><strong>IP Address:</strong> {{ ip_address }}</p>
-    <p><strong>Request Time:</strong> {{ req_time }}</p>
-    <p><strong>Access Count:</strong> {{ access_count }}</p>
+    <p><strong>Access Time:</strong> {{ last_access_time }}</p>
+    <p><strong>Access Count:</strong> {{ count }}</p>
 
     {% if user.is_authenticated %}
     <form action="{% url 'logout' %}" method="post">

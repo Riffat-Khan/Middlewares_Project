@@ -50,7 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'IP_log.middlewares.log_ip.MiddlewareForLoggingData',
+    'IP_log.middlewares.log_ip.LogIpMiddleware',
 ]
 
 LOGGING = {

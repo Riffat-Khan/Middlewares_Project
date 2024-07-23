@@ -9,6 +9,7 @@ from django.utils import timezone
 
 User = get_user_model()
 
+
 class MiddlewareForLoggingDataTest(TestCase):
 
     @patch('logging.getLogger')
@@ -23,8 +24,8 @@ class MiddlewareForLoggingDataTest(TestCase):
         self.assertEqual(response.status_code, 200)
         mock_get_logger().info.assert_any_call('127.0.0.1') 
 
-class RateLimitingTest(TestCase):
 
+class RateLimitingTest(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(email='hamza@gmail.com', password='Riffat@1100')
         self.profile = Profile.objects.create(user=self.user, role=RoleChoice.GOLD.value, count=0, last_access_time=timezone.now())
@@ -53,6 +54,7 @@ class RateLimitingTest(TestCase):
             response = self.client.get('/ip_logging/')
         self.assertEqual(response.status_code, 429)
         
+        
 class AccessControlTest(TestCase):
 
     def setUp(self):
@@ -62,6 +64,7 @@ class AccessControlTest(TestCase):
         for _ in range(1):
             response = self.client.get('/ip_logging/')
         self.assertEqual(response.status_code, 429)
+
 
 class SignupViewTest(TestCase):
     def setUp(self):
@@ -94,6 +97,7 @@ class SignupViewTest(TestCase):
 
 
 class LoginViewTest(TestCase):
+    
     def setUp(self):
         self.email = 'wania@gmail.com'
         self.password = 'Riffat@1100'
