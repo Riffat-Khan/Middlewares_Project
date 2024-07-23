@@ -1,0 +1,64 @@
+import logging
+from django.http import HttpResponse
+from datetime import datetime, timedelta
+from django.utils import timezone
+from django.core.cache import cache
+from ..enum import RoleChoice
+from ..models import Profile
+
+logger = logging.getLogger(__name__)
+
+
+class LogIpMiddleware:
+  def __init__(self, get_response):
+    self.get_response = get_response
+    
+  def __call__(self, request):
+    if request.path == '/ip_logging/' :
+      req_header = request.META
+      
+      x_forwarded_for = req_header.get('HTTP_X_FORWARDED_FOR')
+      if x_forwarded_for:
+        ip_addr = x_forwarded_for.split(',')[0]
+      else:
+        ip_addr = request.META.get('REMOTE_ADDR')      
+      
+      
+      if request.user.is_authenticated:
+        profile = Profile.objects.get(user=request.user)
+        last_access_time = profile.last_access_time
+        current_count = profile.count
+        
+        req_datetime = timezone.now()
+        if last_access_time and (req_datetime - last_access_time) > timedelta(minutes=1):
+          current_count = 0
+
+        new_count = current_count + 1
+        profile.count = new_count
+        profile.last_access_time = req_datetime
+        profile.save()
+        
+        # TODO: log ip
+        logging.info(ip_addr)
+        logging.info(req_datetime)
+        logging.info(new_count)
+
+        if profile.role == RoleChoice.GOLD.value:
+          if new_count > 10:
+            return HttpResponse('Too many requests', status=429)
+        elif profile.role == RoleChoice.SILVER.value:
+          if new_count > 5:
+            return HttpResponse('Too many requests', status=429)
+        elif profile.role == RoleChoice.BRONZE.value:
+          if new_count > 2:
+            return HttpResponse('Too many requests', status=429)
+      
+      else:
+        return HttpResponse('Too many requests', status=429)
+      
+      response = self.get_response(request)
+      return response
+
+    else:
+      response = self.get_response(request)
+      return response
