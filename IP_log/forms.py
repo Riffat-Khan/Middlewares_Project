@@ -1,5 +1,9 @@
 from django import forms
 
 class LoginForm(forms.Form):
-    email = forms.EmailField(max_length=100, required=True)
-    password = forms.CharField(widget = forms.PasswordInput())
+    ROLE = [
+    ("Gold" , "gold"),
+    ("Silver" , "silver"),
+    ("Bronze" , "bronze"),
+]
+    

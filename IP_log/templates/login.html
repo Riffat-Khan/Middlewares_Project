@@ -1,17 +1,62 @@
-{% load compress %}
-{% load static  %}
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
 
-<!DOCTYPE html>
-<html>
-    <body>
-        <link rel="stylesheet" href="{% static 'src/input.css' %}">  
-        <div>
-            <h1>Login here</h1>
-            <form method = "post" action="">
-                {% csrf_token %}
-                {{form }}
-                <input type="submit" value="Submit" >
-            </form>
-        </div>
-    </body>
-</html>
+{% block content %}
+<style>
+  div {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 500px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+  }
+
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+
+  input[type="email"],
+  input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+  }
+
+  button:hover {
+    background-color: #0056b3;
+  }
+</style>
+<h2>Log In</h2>
+<form  action="{% url 'login' %}" method="post">
+  {% csrf_token %}
+  <label for="id_email">Email:</label>
+  <input type="email" name="email" id="id_email" required>
+  <label for="id_password">Password:</label>
+  <input type="password" name="password" id="id_password" required>
+  <button type="submit">Log In</button>
+</form>
+{% endblock %}
